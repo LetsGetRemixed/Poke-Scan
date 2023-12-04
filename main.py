@@ -31,7 +31,7 @@ def main():
     #labels = list(range(1, 205))
     labels = []
     for i in range(1,205):
-        for j in range(1,11):
+        for j in range(1,201):
             labels.append(i)
 
     print("len: ",len(labels))
@@ -58,7 +58,7 @@ def main():
         #plt.imshow(temp)
         #plt.show()
         out.append(temp)
-        for _ in range(9):
+        for _ in range(199):
             arr = img_to_array(temp)
             augment_arr = datagen.random_transform(arr)
             augment_arr = augment_arr.reshape((1,) + augment_arr.shape)
@@ -67,6 +67,7 @@ def main():
             out.append(augment)
 
     print("len: ",len(out))
+    print("label len: ",len(labels))
 
     plt.figure()
     plt.imshow(out[203], 'gray')
@@ -109,7 +110,7 @@ def main():
         model = keras.models.load_model('card_model.keras')
 
 
-    base = np.array(cv.cvtColor(cv.imread( os.path.join(current_directory,"data_samples","testcard7.bmp"), cv.COLOR_RGB2BGR), cv.COLOR_BGR2RGB))
+    base = np.array(cv.imread( os.path.join(current_directory,"data_samples","testcard13.bmp"), cv.COLOR_RGB2BGR))
 
     top_row, bottom_row, width, center = get_card_dimension(base, 9)
 
@@ -119,18 +120,20 @@ def main():
     capped_left = max(int(center[0] - width/2), 0)
     capped_right = min(len(base[0]),int(center[0] + width/2))
 
-    window = cv.cvtColor(base[top_row:bottom_row,capped_left:capped_right], cv.COLOR_RGB2GRAY)
+    window = cv.cvtColor(base[top_row:bottom_row,capped_left:capped_right], cv.COLOR_BGR2GRAY)
     window = cv.resize(window, (165,230))
     window = window[23:109, 14:152]
+    window = np.divide(window,255)
     train_data = np.load('train_data.npy')
     plt.figure()
     plt.imshow(train_data[170])
     plt.show()
+    print("showing wind")
     plt.figure()
     plt.imshow(window)
     plt.show()
-    #h = bottom_row - top_row
-    #w = capped_right - capped_left
+
+
     window = window.reshape(1,86,138,1)
     prob = model.predict(window)
     prob.ravel()

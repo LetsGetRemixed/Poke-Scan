@@ -20,10 +20,23 @@ def train_model(cards,labels):
     model.add(Conv2D(filters=64,kernel_size=(3,3),activation='relu'))
     model.add(MaxPooling2D(pool_size=(2,2)))
 
+    '''model.add(Conv2D(filters=128,kernel_size=(3,3),activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2,2)))
+
+    model.add(Conv2D(filters=256,kernel_size=(3,3),activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2,2)))'''
+
     model.add(Flatten())
-    model.add(Dense(128,activation='relu'))
-    model.add(Dense(200,activation='softmax'))
+    model.add(Dense(256,activation='relu'))
+    model.add(Dense(205,activation='softmax'))
     model.add(Dropout(0.2))
+
+    '''model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.Flatten())
+    model.add(layers.Dense(256, activation='relu'))
+    model.add(layers.Dropout(0.5))
+    model.add(layers.Dense(204, activation='softmax'))'''
+
 
 
     cards = np.divide(cards,255)
@@ -34,10 +47,10 @@ def train_model(cards,labels):
 
     cards,labels = shuffle(cards,labels,random_state=0)
 
-    model.compile(optimizer=Adam(learning_rate=1e-4),loss='binary_crossentropy',metrics=['accuracy'])
+    model.compile(optimizer=Adam(learning_rate=1e-4),loss='sparse_categorical_crossentropy',metrics=['accuracy'])
 
-    BATCH = 4
-    EPOCH = 20
+    BATCH = 128
+    EPOCH = 25
 
     history = model.fit(cards,labels,batch_size=BATCH,epochs=EPOCH)
     
