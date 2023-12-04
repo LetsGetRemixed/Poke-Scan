@@ -38,7 +38,7 @@ def main():
 
     #build training data
 
-    out = []
+    '''out = []
     datagen = ImageDataGenerator(
         rotation_range=60,
         width_shift_range=0.2,
@@ -52,7 +52,8 @@ def main():
     for i in range(1,205):
         temp = np.array(cv.imread( os.path.join(current_directory,"data_samples",str(str(i) + ".bmp")), cv.IMREAD_GRAYSCALE))
         #orig 660 x 920
-        temp = cv.resize(temp, (41,57))
+        temp = cv.resize(temp, (165,230))
+        temp = temp[23:109, 14:152]
         #plt.figure()
         #plt.imshow(temp)
         #plt.show()
@@ -78,7 +79,7 @@ def main():
     train_data = np.load('train_data.npy')
     plt.figure()
     plt.imshow(train_data[17])
-    plt.show()
+    plt.show()'''
 
     #test get_card_dimension
 
@@ -91,7 +92,7 @@ def main():
     
     #train model and test for image 18.bmp
     
-    '''train_data = np.load('train_data.npy')
+    train_data = np.load('train_data.npy')
     labels = np.array(labels)
     
     if os.path.exists('card_model.keras') == False:
@@ -119,17 +120,22 @@ def main():
     capped_right = min(len(base[0]),int(center[0] + width/2))
 
     window = cv.cvtColor(base[top_row:bottom_row,capped_left:capped_right], cv.COLOR_RGB2GRAY)
-    window = cv.resize(window,(41,57))
+    window = cv.resize(window, (165,230))
+    window = window[23:109, 14:152]
+    train_data = np.load('train_data.npy')
+    plt.figure()
+    plt.imshow(train_data[170])
+    plt.show()
     plt.figure()
     plt.imshow(window)
     plt.show()
     #h = bottom_row - top_row
     #w = capped_right - capped_left
-    window = window.reshape(1,57,41,1)
+    window = window.reshape(1,86,138,1)
     prob = model.predict(window)
     prob.ravel()
     print(prob)
-    print("max ind: ", np.argmax(np.array(prob)))'''
+    print("max ind: ", np.argmax(np.array(prob)))
 
     
     
