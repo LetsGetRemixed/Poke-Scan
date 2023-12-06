@@ -47,6 +47,8 @@ def train_model(cards,labels):
 
     cards,labels = shuffle(cards,labels,random_state=0)
 
+    labels = np.array(labels)
+
     model.compile(optimizer=Adam(learning_rate=1e-4),loss='sparse_categorical_crossentropy',metrics=['accuracy'])
 
     BATCH = 128
