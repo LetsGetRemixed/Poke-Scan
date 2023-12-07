@@ -5,17 +5,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow
 from tensorflow import keras
-from keras.preprocessing.image import ImageDataGenerator
-from keras.preprocessing.image import array_to_img
-from keras.preprocessing.image import img_to_array
-from keras.preprocessing.image import load_img
 
 from Train_model import train_model
+from build_data import build_data
 
 def main():
+
+    #Global variabes
+
+    # The base training data only contains 204 samples. For more, we augment the data, so this variable will
+    # determine the amount of additional augmentations should be done per card.
+    # Here, 199 implies that there will be 200 samples of each card. 1 from the base image, and 199 additional augmentations for 200 samples total
+    num_augment = 199
+
     # Main program for users to add/remove cards and generate report of their collection
     current_directory = os.path.abspath(os.path.dirname(__file__))
-
     parent_directory = os.path.dirname(current_directory)
     # Add the parent directory to sys.path
     sys.path.append(parent_directory)
@@ -91,25 +95,20 @@ def main():
                     choice = input("Invalid input, try again ('add' - add cards from input folder, 'remove' - remove cards from input folder, 'report' - generate report)")
 
             if((choice.upper() == "ADD") | (choice.upper() == "REMOVE")):
-            
                 if os.path.exists('card_model.keras') == False:
                     labels = []
                     for i in range(1,205):
-                        for _ in range(1,201):
+                        for _ in range(1,num_augment+2):
                             labels.append(i)
+                    labels = np.array(labels)
                     print("\nCNN model card_models.keras for recognizing cards not found, creating and training a new model")
                     if os.path.exists('train_data.npy') == False:
-                        print("Model training data 'train_data.npy' not found, make sure it is available in the local folder")
-                        return
+                        print("Training data train_data.npy not found, building new training data from uncompiled_train_data.npy")
+                        build_data(num_augment)
                     train_data = np.load('train_data.npy')
-                    model, history = train_model(train_data,labels)
-                    plt.plot(history.history['accuracy'], label='accuracy')
-                    plt.xlabel('Epoch')
-                    plt.ylabel('Accuracy')
-                    plt.ylim([0, 1])
-                    plt.legend(loc='lower right')
-                    plt.show()
+                    model, _ = train_model(train_data,labels)
                     model.save('card_model.keras')
+                    print("CNN model finished training and saved to file")
                 else:
                     if(model == 0):
                         print("\nLoading model...")
@@ -138,19 +137,12 @@ def main():
                     window = cv.resize(window, (165,230))
                     window = window[23:109, 14:152]
                     window = np.divide(window,255)
-                    #print("showing wind")
-                    #plt.figure()
-                    #plt.imshow(window)
-                    #plt.show()
-
-
                     window = window.reshape(1,86,138,1)
                     prob = model.predict(window)
                     prob.ravel()
                     collection = change_collection(collection, prob, label_names, change)
 
                 print("Saving collection")
-                #collection = collection/255
                 np.save('Collection.npy', collection)
 
             if(choice.upper() == "REPORT"):
@@ -167,7 +159,6 @@ def main():
                     break
                 else:
                     choice = input("invalid input, try again; quit or continue? ('quit','continue')")
-                #print("max ind: ", np.argmax(np.array(prob)))
 
     
     
@@ -233,19 +224,6 @@ def get_card_dimension(img, kernel_size):
     bottom_row = top_row + int(stats[max_label,cv.CC_STAT_HEIGHT])
     right_column = left_column + int(stats[max_label,cv.CC_STAT_WIDTH])
     width = int((bottom_row - top_row) / 1.4)
-
-    
-    #print("top: ",top_row)
-    #print("left: ",left_column)
-    #print("bottom: ",bottom_row)
-    #print("right: ",right_column)
-    #print("size: ", (bottom_row - top_row), " x ", width)
-    #print("image width: ", len(mask))
-    #print("center: ", centroids[1])
-
-    #plt.figure()
-    #plt.imshow(mask)
-    #plt.show()
 
     return top_row, bottom_row, width, centroids[1]
 

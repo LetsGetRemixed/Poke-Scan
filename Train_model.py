@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.utils import shuffle
-import tensorflow as tf
+import tensorflow
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
@@ -47,7 +47,6 @@ def train_model(cards,labels):
 
     cards,labels = shuffle(cards,labels,random_state=0)
 
-    labels = np.array(labels)
 
     model.compile(optimizer=Adam(learning_rate=1e-4),loss='sparse_categorical_crossentropy',metrics=['accuracy'])
 

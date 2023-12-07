@@ -5,9 +5,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing.image import array_to_img
 from keras.preprocessing.image import img_to_array
 
-from Train_model import train_model
-
-def main():
+def build_data(num_augment):
     # Helper program which takes files from data_samples and creates train_data.npy containing 40,800 samples for the model in main.py to train model
     # Labels are generated in main.py, where every 200 samples in 'out' are in a class, with 204 unique classes.
     # If modifying amount of data samples, make sure 'labels' in main.py reflects the labels you want
@@ -32,7 +30,7 @@ def main():
         temp = uncompiled_data[i]
         print("iteration ",i, " of ", int(len(uncompiled_data)))
         out.append(temp)
-        for _ in range(199):
+        for _ in range(num_augment):
             arr = img_to_array(temp)
             augment_arr = datagen.random_transform(arr)
             augment_arr = augment_arr.reshape((1,) + augment_arr.shape)
@@ -41,9 +39,5 @@ def main():
             out.append(augment)
 
     out = np.array(out)
-    print("Expecting 40800 data samples, finished with ",len(out), "data samples")
+    print("Expecting 40800 data samples, finished with",len(out), "data samples")
     np.save('train_data.npy', out)
-
-
-if __name__ == '__main__':
-    main()
