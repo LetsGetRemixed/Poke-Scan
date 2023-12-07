@@ -164,6 +164,7 @@ def main():
     
 def change_collection(temp_collection, probability, label_names, change):
     is_card = input(("Is this card " + str(label_names[np.argmax(np.array(probability))-1]) + "? (Y/N)"))
+    card_idx = np.argmax(np.array(probability))-1
 
     while True:
         if(is_card.upper() == "Y"):
@@ -174,7 +175,6 @@ def change_collection(temp_collection, probability, label_names, change):
             is_card = input("Invalid input, try again (Y/N): ")
 
     if(is_card.upper() == "Y"):
-        card_idx = np.argmax(np.array(probability))-1
 
         if(temp_collection[card_idx] + change < 0):
             print("Value for",label_names[card_idx], "is already 0, cannot remove more cards")
@@ -196,8 +196,13 @@ def change_collection(temp_collection, probability, label_names, change):
                 actual_card = input("What was the actual card (input 'options' for list of available inputs)? ")
             else:
                 actual_card = input("invalid input; what was the actual card (input 'options' for list of available inputs)?")
-
-        temp_collection[label_names.index(actual_card)] = temp_collection[label_names.index(actual_card)] + change
+                
+        card_idx = label_names.index(actual_card)
+        if(temp_collection[card_idx] + change < 0):
+            print("Value for",label_names[card_idx], "is already 0, cannot remove more cards")
+            return temp_collection
+        else:
+            temp_collection[card_idx] = temp_collection[card_idx] + change
 
         if(change == 1):
             print("Added ",actual_card, " to collection")
