@@ -6,7 +6,7 @@ from keras.preprocessing.image import array_to_img
 from keras.preprocessing.image import img_to_array
 
 def build_data(num_augment):
-    # Helper program which takes files from data_samples and creates train_data.npy containing 40,800 samples for the model in main.py to train model
+    # Helper program which takes uncompiled_train_data.npy and creates train_data.npy containing 40,800 samples for the model in main.py to train model
     # Labels are generated in main.py, where every 200 samples in 'out' are in a class, with 204 unique classes.
     # If modifying amount of data samples, make sure 'labels' in main.py reflects the labels you want
 

@@ -2,7 +2,6 @@ import os
 import sys
 import cv2 as cv
 import numpy as np
-import matplotlib.pyplot as plt
 import tensorflow
 from tensorflow import keras
 
@@ -19,9 +18,9 @@ def main():
     num_augment = 199
 
     # Main program for users to add/remove cards and generate report of their collection
+
     current_directory = os.path.abspath(os.path.dirname(__file__))
     parent_directory = os.path.dirname(current_directory)
-    # Add the parent directory to sys.path
     sys.path.append(parent_directory)
     input_path = os.path.join(current_directory,"input")
     file_list = os.listdir(input_path)
@@ -223,7 +222,6 @@ def get_card_dimension(img, kernel_size):
     nb_components, output, stats, centroids = cv.connectedComponentsWithStats(mask, connectivity=4)
     max_label, _ = max([(i, stats[i,cv.CC_STAT_AREA]) for i in range(1, nb_components)], key= lambda x:x[1])
     mask[output != max_label] = 0
-
     top_row = int(stats[max_label,cv.CC_STAT_TOP])
     bottom_row = top_row + int(stats[max_label,cv.CC_STAT_HEIGHT])
     width = int((bottom_row - top_row) / 1.4)
