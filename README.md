@@ -24,6 +24,6 @@ The "input" folder includes some preprepared testcases to use on the model once 
 
 ## Requirements
 To run the program, you will need to have the following python packages installed:
-**opencv-python
-tensorflow
-scikit-learn**
+**opencv-python**,
+**tensorflow**,
+**scikit-learn**,
