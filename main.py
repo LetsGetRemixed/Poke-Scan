@@ -45,7 +45,7 @@ def main():
         "Jigglypuff", "Wigglytuff", "Zubat", "Golbat", "Oddish", "Gloom", 
         "Vileplume", "Paras", "Parasect", "Venonat", "Venomoth", "Diglett", 
         "Dugtrio", "Meowth", "Persian", "Psyduck", "Golduck", "Mankey", 
-        "Primeape", "Growlithe", "Arcane", "Poliwag", "Poliwhirl", "Poliwrath", 
+        "Primeape", "Growlithe", "Arcanine", "Poliwag", "Poliwhirl", "Poliwrath", 
         "Abra", "Kadabra", "Alakazam", "Machop", "Machoke", "Machamp", 
         "Bellsprout", "Weepinbell", "Victreebel", "Tentacool", "Tentacruel", 
         "Geodude", "Graveler", "Golem", "Ponyta", "Rapidash", "Slowpoke", 
@@ -196,7 +196,7 @@ def change_collection(temp_collection, probability, label_names, change):
                 actual_card = input("What was the actual card (input 'options' for list of available inputs)? ")
             else:
                 actual_card = input("invalid input; what was the actual card (input 'options' for list of available inputs)?")
-                
+
         card_idx = label_names.index(actual_card)
         if(temp_collection[card_idx] + change < 0):
             print("Value for",label_names[card_idx], "is already 0, cannot remove more cards")
@@ -217,17 +217,15 @@ def get_card_dimension(img, kernel_size):
     lower = np.array([1,1,1])
     upper = np.array([255,50,255])
     mask = cv.inRange(hsv, lower, upper)
-    erodeKernel = np.ones((kernel_size,kernel_size),np.uint8)
-    mask = cv.dilate(mask,erodeKernel)
+    dilateKernel = np.ones((kernel_size,kernel_size),np.uint8)
+    mask = cv.dilate(mask,dilateKernel)
 
     nb_components, output, stats, centroids = cv.connectedComponentsWithStats(mask, connectivity=4)
-    max_label, max_size = max([(i, stats[i,cv.CC_STAT_AREA]) for i in range(1, nb_components)], key= lambda x:x[1])
+    max_label, _ = max([(i, stats[i,cv.CC_STAT_AREA]) for i in range(1, nb_components)], key= lambda x:x[1])
     mask[output != max_label] = 0
 
     top_row = int(stats[max_label,cv.CC_STAT_TOP])
-    left_column = int(stats[max_label,cv.CC_STAT_LEFT])
     bottom_row = top_row + int(stats[max_label,cv.CC_STAT_HEIGHT])
-    right_column = left_column + int(stats[max_label,cv.CC_STAT_WIDTH])
     width = int((bottom_row - top_row) / 1.4)
 
     return top_row, bottom_row, width, centroids[1]
