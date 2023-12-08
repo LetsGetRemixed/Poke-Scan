@@ -26,7 +26,7 @@ def main():
     input_path = os.path.join(data_directory)
     file_list = os.listdir(input_path)
 
-    if os.path.exists('Collection.npy') == False:
+    if os.path.exists(os.path.join(code_directory,'Collection.npy')) == False:
         print("Card collection 'collection.npy' not found, creating new card collection...")
         collection = np.zeros(204,np.uint)
         np.save(os.path.join(code_directory,'Collection.npy'), collection)
@@ -95,17 +95,17 @@ def main():
                     choice = input("Invalid input, try again ('add' - add cards from input folder, 'remove' - remove cards from input folder, 'report' - generate report)")
 
             if((choice.upper() == "ADD") | (choice.upper() == "REMOVE")):
-                if os.path.exists('card_model.keras') == False:
+                if os.path.exists(os.path.join(training_directory,'card_model.keras')) == False:
                     labels = []
                     for i in range(1,205):
                         for _ in range(1,num_augment+2):
                             labels.append(i)
                     labels = np.array(labels)
                     print("\nCNN model card_models.keras for recognizing cards not found, creating and training a new model")
-                    if os.path.exists('train_data.npy') == False:
+                    if os.path.exists(os.path.join(code_directory,'train_data.npy')) == False:
                         print("Training data train_data.npy not found, building new training data from uncompiled_train_data.npy")
                         build_data(num_augment)
-                    train_data = np.load(os.path.join(training_directory,'train_data.npy'))
+                    train_data = np.load(os.path.join(code_directory,'train_data.npy'))
                     model, _ = train_model(train_data,labels)
                     model.save(os.path.join(training_directory,'card_model.keras'))
                     print("CNN model finished training and saved to file")
