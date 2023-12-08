@@ -1,16 +1,18 @@
+import os
 import numpy as np
 import tensorflow
 from tensorflow import keras
 from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing.image import array_to_img
 from keras.preprocessing.image import img_to_array
+from config import code_directory
 
 def build_data(num_augment):
     # Helper program which takes uncompiled_train_data.npy and creates train_data.npy containing 40,800 samples for the model in main.py to train model
     # Labels are generated in main.py, where every 200 samples in 'out' are in a class, with 204 unique classes.
     # If modifying amount of data samples, make sure 'labels' in main.py reflects the labels you want
 
-    uncompiled_data = np.load("uncompiled_train_data.npy")
+    uncompiled_data = np.load(os.path.join(code_directory,"uncompiled_train_data.npy"))
 
 
     #build training data
@@ -40,4 +42,4 @@ def build_data(num_augment):
 
     out = np.array(out)
     print("Expecting 40800 data samples, finished with",len(out), "data samples")
-    np.save('train_data.npy', out)
+    np.save(os.path.join(code_directory,'train_data.npy'), out)

@@ -4,6 +4,7 @@ import cv2 as cv
 import numpy as np
 import tensorflow
 from tensorflow import keras
+from config import data_directory,code_directory,training_directory
 
 from Train_model import train_model
 from build_data import build_data
@@ -22,16 +23,16 @@ def main():
     current_directory = os.path.abspath(os.path.dirname(__file__))
     parent_directory = os.path.dirname(current_directory)
     sys.path.append(parent_directory)
-    input_path = os.path.join(current_directory,"input")
+    input_path = os.path.join(data_directory)
     file_list = os.listdir(input_path)
 
     if os.path.exists('Collection.npy') == False:
         print("Card collection 'collection.npy' not found, creating new card collection...")
         collection = np.zeros(204,np.uint)
-        np.save('Collection.npy', collection)
+        np.save(os.path.join(code_directory,'Collection.npy'), collection)
     else:
         print("Card collection 'collection.npy' found, loading collection...")
-        collection = np.load('Collection.npy')
+        collection = np.load(os.path.join(code_directory,'Collection.npy'))
 
 
     label_names = [
@@ -104,14 +105,14 @@ def main():
                     if os.path.exists('train_data.npy') == False:
                         print("Training data train_data.npy not found, building new training data from uncompiled_train_data.npy")
                         build_data(num_augment)
-                    train_data = np.load('train_data.npy')
+                    train_data = np.load(os.path.join(training_directory,'train_data.npy'))
                     model, _ = train_model(train_data,labels)
-                    model.save('card_model.keras')
+                    model.save(os.path.join(training_directory,'card_model.keras'))
                     print("CNN model finished training and saved to file")
                 else:
                     if(model == 0):
                         print("\nLoading model...")
-                        model = keras.models.load_model('card_model.keras')
+                        model = keras.models.load_model(os.path.join(training_directory,'card_model.keras'))
                 
                 if(choice.upper() == "ADD"):
                     change = 1
@@ -142,7 +143,7 @@ def main():
                     collection = change_collection(collection, prob, label_names, change)
 
                 print("Saving collection")
-                np.save('Collection.npy', collection)
+                np.save(os.path.join(code_directory,'Collection.npy'), collection)
 
             if(choice.upper() == "REPORT"):
                 print("\nPOKEMON CARDS IN COLLECTION\n---------------------------")
